@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Solution {
     private List<List<Integer>> result = new ArrayList<>();
-    private boolean[] used;
+    private boolean[] visited;
 
     public List<List<Integer>> permute(int[] nums) {
         if (nums.length == 0) {
             return result;
         }
-        used = new boolean[nums.length];
+        visited = new boolean[nums.length];
         permute(nums, 0, new ArrayList<>());
         return result;
     }
@@ -22,18 +22,13 @@ public class Solution {
             return;
         }
         for (int i = 0; i < nums.length; i++) {
-            if (!used[i]) {
+            if (!visited[i]) {
                 p.add(nums[i]);
-                used[i] = true;
+                visited[i] = true;
                 permute(nums, index + 1, p);
                 p.remove(p.size() - 1);
-                used[i] = false;
+                visited[i] = false;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        solution.permute(new int[]{1, 2, 3});
     }
 }
