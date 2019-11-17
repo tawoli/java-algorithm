@@ -7,11 +7,11 @@ public class Solution {
     private List<String> strings = new ArrayList<>();
 
     public List<String> restoreIpAddresses(String s) {
-        findAddress(s, 0, 0, "");
+        restoreIpAddresses(s, 0, 0, "");
         return strings;
     }
 
-    private void findAddress(String s, int index, int level, String res) {
+    private void restoreIpAddresses(String s, int index, int level, String res) {
         if (level == 4) {
             if (index == s.length()) {
                 strings.add(res.substring(0, res.length() - 1));
@@ -20,11 +20,11 @@ public class Solution {
         }
         for (int i = index; i < index + 3 && i < s.length(); i++) {
             if (i == index && s.charAt(i) == '0') {
-                findAddress(s, i + 1, level + 1, res + s.charAt(i) + '.');
+                restoreIpAddresses(s, i + 1, level + 1, res + s.charAt(i) + '.');
                 break;
             }
             if (Integer.parseInt(s.substring(index, i + 1)) <= 255) {
-                findAddress(s, i + 1, level + 1, res + s.substring(index, i + 1) + '.');
+                restoreIpAddresses(s, i + 1, level + 1, res + s.substring(index, i + 1) + '.');
             }
         }
     }
