@@ -1,29 +1,9 @@
-package leetcode._303;
+package leetcode._307;
 
 public class NumArray {
-    private SegmentTree<Integer> segmentTree;
-
-    public NumArray(int[] nums) {
-        if (nums.length > 0) {
-            Integer[] data = new Integer[nums.length];
-            for (int i = 0; i < nums.length; i++) {
-                data[i] = nums[i];
-            }
-            segmentTree = new SegmentTree<>(data, Integer::sum);
-        }
-    }
-
-    public int sumRange(int i, int j) {
-        if (segmentTree == null) {
-            throw new IllegalArgumentException("Segment Tree is null.");
-        }
-        return segmentTree.query(i, j);
-    }
-
     interface Merger<E> {
         E merge(E a, E b);
     }
-
 
     static class SegmentTree<E> {
         private E[] tree;
@@ -96,6 +76,31 @@ public class NumArray {
             }
         }
 
+        public void set(int index, E e) {
+            if (index < 0 || index >= data.length) {
+                throw new IllegalArgumentException("Index is illegal.");
+            }
+            data[index] = e;
+            set(0, 0, data.length - 1, index, e);
+        }
+
+        private void set(int treeIndex, int l, int r, int index, E e) {
+            if (l == r) {
+                tree[treeIndex] = e;
+                return;
+            }
+            int mid = l + (r - l) / 2;
+            int leftTreeIndex = leftChild(treeIndex);
+            int rightTreeIndex = rightChild(treeIndex);
+            if (index >= mid + 1) {
+                set(rightTreeIndex, mid + 1, r, index, e);
+            } else {
+                set(leftTreeIndex, l, mid, index, e);
+            }
+            tree[treeIndex] = merger.merge(tree[leftTreeIndex], tree[rightTreeIndex]);
+        }
+
+
         @Override
         public String toString() {
             StringBuilder res = new StringBuilder();
@@ -112,5 +117,30 @@ public class NumArray {
             res.append(']');
             return res.toString();
         }
+    }
+    private SegmentTree<Integer> segmentTree;
+
+    public NumArray(int[] nums) {
+        if (nums.length > 0) {
+            Integer[] data = new Integer[nums.length];
+            for (int i = 0; i < nums.length; i++) {
+                data[i] = nums[i];
+            }
+            segmentTree = new SegmentTree<>(data, Integer::sum);
+        }
+    }
+
+    public void update(int i, int val) {
+        if (segmentTree == null) {
+            throw new IllegalArgumentException("Segment Tree is null.");
+        }
+        segmentTree.set(i, val);
+    }
+
+    public int sumRange(int i, int j) {
+        if (segmentTree == null) {
+            throw new IllegalArgumentException("Segment Tree is null.");
+        }
+        return segmentTree.query(i, j);
     }
 }
